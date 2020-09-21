@@ -155,8 +155,7 @@
 							maxLength="7" pattern="[0-9]{3}-[0-9]{3}" readonly
 							data-msg-required="우편번호 필수" data-msg-pattern="형식확인"/>
 					<span class='error'><%=errors.get("mem_zip") %></span>
-					<input type="button" id="zipSearchBtn" class="btn btn-info ml-3" value="우편번호 검색" 
-						 data-toggle="modal" data-target="#zipSearchModal"/>
+					<input type="button" id="zipSearchBtn" class="btn btn-info ml-3" value="우편번호 검색" />
 				</div>
 				</td>
 			</tr>
@@ -285,7 +284,8 @@
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/searchZip.js?<%=new Date().getTime()%>"></script>
 <script type="text/javascript">
 	$("#registForm").searchZip({
-		url:"<%=request.getContextPath() %>/zipSearch.do",
+		searchBtn:"#zipSearchBtn",
+		url:"<%=request.getContextPath() %>/searchZip_DT.do",
 		zipCodeTag : "[name='mem_zip']",
 		address1Tag : "[name='mem_add1']",
 		address2Tag : "[name='mem_add2']"

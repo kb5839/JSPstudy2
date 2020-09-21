@@ -12,6 +12,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import kr.or.ddit.db.ConnectionFactory;
 import kr.or.ddit.db.CustomSqlSessionFactoryBuilder;
 import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.PagingVO;
 
 public class MemberDAOImpl implements IMemberDAO {
 	
@@ -40,12 +41,22 @@ public class MemberDAOImpl implements IMemberDAO {
 	}
 
 	@Override
-	public List<MemberVO> selectMemberList() {
+	public int selectMemberCount(PagingVO<MemberVO> pagingVO) {
 		try(
 			SqlSession session = sqlSessionFactory.openSession();
 		){		
 			IMemberDAO mapper = session.getMapper(IMemberDAO.class);
-			return mapper.selectMemberList();
+			return mapper.selectMemberCount(pagingVO);
+		}
+	}
+	
+	@Override
+	public List<MemberVO> selectMemberList(PagingVO pagingVO) {
+		try(
+			SqlSession session = sqlSessionFactory.openSession();
+		){		
+			IMemberDAO mapper = session.getMapper(IMemberDAO.class);
+			return mapper.selectMemberList(pagingVO);
 		}
 	}
 

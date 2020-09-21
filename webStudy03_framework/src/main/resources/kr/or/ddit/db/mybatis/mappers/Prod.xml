@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.prod.dao.IProdDAO">
+	<resultMap type="ProdVO" id="prodMap" autoMapping="true">
+		<id property="prod_id" column="PROD_ID"/>
+		<collection property="memberList" ofType="MemberVO" autoMapping="true"/>
+	</resultMap>
+	<select id="selectProd" parameterType="string" resultMap="prodMap">
+		WITH CARTVIEW AS (
+		    SELECT DISTINCT CART_MEMBER, CART_PROD
+		            , MEM_ID, MEM_NAME, MEM_HP, MEM_ADD1, MEM_MAIL
+		    FROM CART INNER JOIN MEMBER ON(CART_MEMBER = MEM_ID)
+		)
+		SELECT
+		    PROD_ID,    PROD_NAME,    PROD_LGU,    PROD_BUYER,
+		    PROD_COST,    PROD_PRICE,    PROD_SALE,    PROD_OUTLINE,
+		    PROD_DETAIL,    PROD_IMG,    PROD_TOTALSTOCK,    TO_CHAR(PROD_INSDATE, 'YYYY-MM-DD'),
+		    PROD_PROPERSTOCK,    PROD_SIZE,    PROD_COLOR,    PROD_DELIVERY,
+		    PROD_UNIT,    PROD_QTYIN,    PROD_QTYSALE,    PROD_MILEAGE
+		    , MEM_ID, MEM_NAME, MEM_HP, MEM_ADD1, MEM_MAIL
+		FROM    PROD LEFT OUTER JOIN CARTVIEW ON (PROD_ID = CART_PROD)
+		WHERE PROD_ID = #{prod_id}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+

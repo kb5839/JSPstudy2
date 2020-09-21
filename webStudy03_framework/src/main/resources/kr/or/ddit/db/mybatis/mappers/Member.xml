@@ -1,28 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.member.dao.IMemberDAO">
-	<select id="selectMemberList" resultType="MemberVO">
-		SELECT                                                                                        
-		    MEM_ID,    MEM_PASS,    MEM_NAME,                                                             
-		    MEM_REGNO1,    MEM_REGNO2,    TO_CHAR(MEM_BIR,'YYYY-MM-DD') MEM_BIR,                          
-		    MEM_ZIP,    MEM_ADD1,    MEM_ADD2,                                                            
-		    MEM_HOMETEL,    MEM_COMTEL,    MEM_HP,                                                        
-		    MEM_MAIL,    MEM_JOB,    MEM_LIKE,                                                            
-		    MEM_MEMORIAL,    TO_CHAR(MEM_MEMORIALDAY, 'YYYY-MM-DD') MEM_MEMORIALDAY,    MEM_MILEAGE,      
-		    MEM_DELETE                                                                                    
-	    FROM    MEMBER     
+	<sql id="searchFrag">
+		<where>
+			<if test="searchVO neq null and @org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.searchWord)">
+				<if test="'name' eq searchVO.searchType">
+					MEM_NAME LIKE '%'||#{searchVO.searchWord}||'%'
+				</if>
+				<if test="'address' eq searchVO.searchType">
+					MEM_ADD1 LIKE '%'||#{searchVO.searchWord}||'%'
+				</if>
+				<if test="'all' eq searchVO.searchType">
+					INSTR(MEM_NAME, #{searchVO.searchWord}) > 0
+					OR
+					INSTR(MEM_ADD1, #{searchVO.searchWord}) > 0
+				</if>
+			</if>
+		</where>
+	</sql>
+	<select id="selectMemberCount" parameterType="PagingVO" resultType="int">
+		SELECT COUNT(*)
+		FROM MEMBER
+		<include refid="searchFrag" />
 	</select>
-	<select id="selectMember" parameterType="string" resultType="MemberVO">
-		SELECT                                                                                        
-		    MEM_ID,    MEM_PASS,    MEM_NAME,                                                             
-		    MEM_REGNO1,    MEM_REGNO2,    TO_CHAR(MEM_BIR,'YYYY-MM-DD') MEM_BIR,                          
-		    MEM_ZIP,    MEM_ADD1,    MEM_ADD2,                                                            
-		    MEM_HOMETEL,    MEM_COMTEL,    MEM_HP,                                                        
-		    MEM_MAIL,    MEM_JOB,    MEM_LIKE,                                                            
-		    MEM_MEMORIAL,    TO_CHAR(MEM_MEMORIALDAY, 'YYYY-MM-DD') MEM_MEMORIALDAY,    MEM_MILEAGE,      
-		    MEM_DELETE                                                                                    
-	    FROM    MEMBER                                                                                
-	    WHERE MEM_ID = #{mem_id}        
+
+	<select id="selectMemberList" parameterType="PagingVO" resultType="MemberVO">
+		SELECT A.*
+		FROM(
+			SELECT  ROWNUM RNUM,                                                                                        
+			    MEM_ID,    MEM_PASS,    MEM_NAME,                                                             
+			    MEM_REGNO1,    MEM_REGNO2,    TO_CHAR(MEM_BIR,'YYYY-MM-DD') MEM_BIR,                          
+			    MEM_ZIP,    MEM_ADD1,    MEM_ADD2,                                                            
+			    MEM_HOMETEL,    MEM_COMTEL,    MEM_HP,                                                        
+			    MEM_MAIL,    MEM_JOB,    MEM_LIKE,                                                            
+			    MEM_MEMORIAL,    TO_CHAR(MEM_MEMORIALDAY, 'YYYY-MM-DD') MEM_MEMORIALDAY,    MEM_MILEAGE,      
+			    MEM_DELETE                                                                                    
+		    FROM    MEMBER
+		    <include refid="searchFrag" />
+	    )  A
+	    <![CDATA[
+	    	WHERE RNUM >= #{startRow} AND RNUM <= #{endRow}
+	    ]]>
+	</select>
+	
+	<resultMap type="MemberVO" id="memberMap" autoMapping="true">
+		<id property="mem_id" column="MEM_ID"/>
+		<collection property="prodList" ofType="ProdVO" autoMapping="true" >
+		</collection>
+	</resultMap>
+	
+	<select id="selectMember" parameterType="string" resultMap="memberMap">
+		WITH MEMCART AS(
+			SELECT DISTINCT                                                                                       
+			    MEM_ID,    MEM_PASS,    MEM_NAME,                                                             
+			    MEM_REGNO1,    MEM_REGNO2,    TO_CHAR(MEM_BIR,'YYYY-MM-DD') MEM_BIR,                          
+			    MEM_ZIP,    MEM_ADD1,    MEM_ADD2,                                                            
+			    MEM_HOMETEL,    MEM_COMTEL,    MEM_HP,                                                  
+			    MEM_MAIL,    MEM_JOB,    MEM_LIKE,                                                            
+			    MEM_MEMORIAL,    TO_CHAR(MEM_MEMORIALDAY, 'YYYY-MM-DD') MEM_MEMORIALDAY,    MEM_MILEAGE,      
+			    MEM_DELETE 
+			     , CART_MEMBER, CART_PROD                                                                                   
+		    FROM    MEMBER LEFT OUTER JOIN CART ON (MEM_ID = CART_MEMBER)                                                                               
+		    WHERE MEM_ID = #{mem_id}
+	    ) 
+	    SELECT MEMCART.* 
+	    	, PROD_ID, PROD_NAME, PROD_COST, PROD_PRICE, PROD_MILEAGE
+	    FROM MEMCART LEFT OUTER JOIN PROD ON (CART_PROD = PROD_ID)       
 	</select>
 	<insert id="insertMember" parameterType="MemberVO" >
 		 INSERT INTO MEMBER (													

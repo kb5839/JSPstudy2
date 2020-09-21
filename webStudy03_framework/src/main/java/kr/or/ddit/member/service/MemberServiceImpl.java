@@ -9,6 +9,7 @@ import kr.or.ddit.exception.CustomException;
 import kr.or.ddit.member.dao.IMemberDAO;
 import kr.or.ddit.member.dao.MemberDAOImpl;
 import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.PagingVO;
 
 public class MemberServiceImpl implements IMemberService {
 	private IMemberDAO memberDAO = MemberDAOImpl.getInstance();
@@ -42,9 +43,13 @@ public class MemberServiceImpl implements IMemberService {
 	}
 
 	@Override
-	public List<MemberVO> retrieveMemberList() {
-		// TODO Auto-generated method stub
-		return null;
+	public int retrieveMemberCount(PagingVO<MemberVO> pagingVO) {
+		return memberDAO.selectMemberCount(pagingVO);
+	}
+	
+	@Override
+	public List<MemberVO> retrieveMemberList(PagingVO<MemberVO> pagingVO) {
+		return memberDAO.selectMemberList(pagingVO);
 	}
 
 	@Override
@@ -78,8 +83,23 @@ public class MemberServiceImpl implements IMemberService {
 
 	@Override
 	public ServiceResult removeMember(MemberVO member) {
-		// TODO Auto-generated method stub
-		return null;
+		Object result = authService.authenticate(member);
+		ServiceResult serviceResult = null;
+		if(result instanceof MemberVO) {
+			int rowcnt = memberDAO.deleteMember(member.getMem_id());
+			if(rowcnt>0) {
+				serviceResult = ServiceResult.OK;
+			}else {
+				serviceResult = ServiceResult.FAILED;
+			}
+		}else {
+			if(ServiceResult.NOTEXIST.equals(result)) {
+				throw new CustomException(member.getMem_id()+"는 회원이 아님.");
+			}else {
+				serviceResult = (ServiceResult) result;
+			}
+		}
+		return serviceResult;
 	}
 
 }

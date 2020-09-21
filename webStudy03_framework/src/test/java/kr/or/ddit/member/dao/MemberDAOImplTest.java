@@ -10,10 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.PagingVO;
 
 public class MemberDAOImplTest {
 	IMemberDAO dao;
 	MemberVO testMember;
+	PagingVO<MemberVO> pagingVO;
 	@Before
 	public void setUp() throws Exception {
 		dao = MemberDAOImpl.getInstance();
@@ -30,17 +32,20 @@ public class MemberDAOImplTest {
 					.mem_hometel("000-000-0000")
 					.mem_mail("aa@naver.com")
 					.build();
+		pagingVO = new PagingVO<>();
+		pagingVO.setCurrentPage(1);
 	}
 
-	@Test
+//	@Test
 	public void testInsertMember() {
 		int rowcnt = dao.insertMember(testMember);
 		assertNotEquals(0, rowcnt);
 	}
 
-	@Test
+//	@Test
 	public void testSelectMemberList() {
-		List<MemberVO> list = dao.selectMemberList();
+		
+		List<MemberVO> list = dao.selectMemberList(pagingVO);
 		assertNotNull(list);
 		assertNotEquals(0, list.size());
 	}
@@ -48,19 +53,20 @@ public class MemberDAOImplTest {
 	@Test(timeout=2000)
 	public void testSelectMember() {
 		MemberVO member = dao.selectMember("a001");
+		System.out.println(member.getProdList());
 		assertNotNull(member);
 		member = dao.selectMember("asdfasdfasf");
 		assertNull(member);
 	}
 
-	@Test
+//	@Test
 	public void testUpdateMember() {
 		int rowcnt = dao.updateMember(testMember);
 		assertEquals(0, rowcnt);
 	}
 
 //	@Test(expected=SQLException.class)
-	@Test(expected=PersistenceException.class)
+//	@Test(expected=PersistenceException.class)
 	public void testDeleteMember() {
 		int rowcnt = dao.deleteMember("a001");
 	}
