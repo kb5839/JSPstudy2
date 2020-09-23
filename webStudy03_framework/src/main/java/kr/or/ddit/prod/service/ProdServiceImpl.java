@@ -1,5 +1,6 @@
 package kr.or.ddit.prod.service;
 
+import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.exception.CustomException;
 import kr.or.ddit.prod.dao.IProdDAO;
 import kr.or.ddit.prod.dao.ProdDAOImpl;
@@ -17,4 +18,13 @@ public class ProdServiceImpl implements IProdService {
 		return prod;
 	}
 
+	@Override
+	public ServiceResult createProd(ProdVO prod) {
+		int rowcnt = dao.insertProd(prod);
+		ServiceResult result = ServiceResult.FAILED;
+		if(rowcnt>0) {
+			result = ServiceResult.OK;
+		}
+		return result;
+	}
 }

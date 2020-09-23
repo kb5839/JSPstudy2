@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.prop.dao.IDataBasePropertyDAO">
+	<select id="selectAllProperty_names" resultType="string">
+		 SELECT PROPERTY_NAME FROM DATABASE_PROPERTIES
+	</select>
+	<select id="selectDataBaseProperties" parameterType="DataBasePropertyVO" resultType="DataBasePropertyVO">
+		SELECT PROPERTY_NAME, PROPERTY_VALUE, DESCRIPTION 
+		FROM DATABASE_PROPERTIES
+		<trim prefix=" WHERE " prefixOverrides="AND">
+			<if test="propParam!=null">
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(propParam.property_name)">
+					AND	INSTR(PROPERTY_NAME, #{propParam.property_name}) > 0 
+				</if>
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(propParam.property_value)">
+					AND	INSTR(PROPERTY_VALUE, #{propParam.property_value}) > 0 
+				</if>
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(propParam.description)">
+					AND	INSTR(DESCRIPTION, #{propParam.description}) > 0 
+				</if>
+			</if>
+		</trim>
+	</select>
+</mapper>

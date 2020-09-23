@@ -3,13 +3,14 @@ package kr.or.ddit.prop.service;
 import java.util.Calendar;
 import java.util.List;
 
-import kr.or.ddit.prop.dao.DataBasePropertyDAO_JDBC;
+import kr.or.ddit.prop.dao.DataBasePropertyDAO_Mybatis;
 import kr.or.ddit.prop.dao.IDataBasePropertyDAO;
 import kr.or.ddit.vo.DataBasePropertyVO;
 
 public class DataBasePropertyServiceImpl implements IDataBasePropertyService {
 	// 결합력 최상!!, HCLC(High Cohesion, Loose Coupling)
-	IDataBasePropertyDAO dao = new DataBasePropertyDAO_JDBC();
+//	IDataBasePropertyDAO dao = new DataBasePropertyDAO_JDBC();
+	IDataBasePropertyDAO dao = DataBasePropertyDAO_Mybatis.getInstance();
 
 	@Override
 	public List<DataBasePropertyVO> readDataBaseProperties(DataBasePropertyVO param) {

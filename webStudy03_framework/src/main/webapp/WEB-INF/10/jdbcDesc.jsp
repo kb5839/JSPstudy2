@@ -13,11 +13,11 @@
 <head>
 <meta charset="UTF-8">
 <title>10/jdbcDesc.jsp</title>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-3.5.1.min.js"></script>
+<jsp:include page="/includee/preScript.jsp" />
 <script type="text/javascript">
 	$(function(){
 		$("[name='property_name']").val("${param.property_name}");
-		$("formaaa:first").on("submit", function(event){
+		$("form:first").on("submit", function(event){
 			event.preventDefault();
 			let url = this.action?this.action:"";
 			let method = $(this).attr("method")?this.method:"get";
@@ -56,7 +56,7 @@
 	});
 </script>
 </head>
-<body>
+<body class="container">
 <h4>JDBC(Java DataBase Connectivity)</h4>
 
 <pre>
@@ -81,9 +81,9 @@
 		List<String> propNames = (List) request.getAttribute("propNames");
 	%>
 </pre>
-<form>
+<form class="form-inline mb-3">
 	프로퍼티명:
-	<select name="property_name">
+	<select name="property_name" class="form-control ml-2 mr-2" onchange="$('form:first').submit();">
 		<option value>프로퍼티명선택</option>
 		<%
 			for(String name : propNames){
@@ -93,10 +93,10 @@
 			}
 		%>
 	</select>
-	프로퍼티값:<input type="text" name="property_value" value="${param.property_value }"/>
-	<input type="submit" value="검색" />
+	프로퍼티값:<input type="text" name="property_value" value="${param.property_value }" class="form-control ml-2"/>
+	<input type="submit" value="검색" class="btn btn-primary ml-2"/>
 </form>
-<table>
+<table class="table table-bordered">
 	<thead>
 		<tr>
 			<th>PROPERTY_NAME?</th>
@@ -111,7 +111,7 @@
 				<tr>
 					<td><%=dbProp.getProperty_name() %></td>
 					<td><%=dbProp.getProperty_value() %></td>
-					<td><%=dbProp.getDecription() %></td>
+					<td><%=dbProp.getDescription() %></td>
 				</tr>
 				<%
 			}

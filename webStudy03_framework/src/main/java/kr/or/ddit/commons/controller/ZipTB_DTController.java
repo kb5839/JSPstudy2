@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.ddit.commons.dao.IZipCodeSearchDAO;
 import kr.or.ddit.commons.dao.ZipCodeSearchDAOImpl;
 import kr.or.ddit.vo.PagingVO;
+import kr.or.ddit.vo.SearchVO;
 import kr.or.ddit.vo.ZipCodeVO;
 
 @WebServlet("/searchZip_DT.do")
@@ -29,11 +30,10 @@ public class ZipTB_DTController extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8");
-		String pageParam = req.getParameter("page");
-		String searchWord = req.getParameter("search[value]");
+		String searchWord = req.getParameter("search[value]"); // 검색 키워드
 		String draw = req.getParameter("draw");
-		String startParam = req.getParameter("start");
-		String lengthParam = req.getParameter("length");
+		String startParam = req.getParameter("start"); // startRow-1
+		String lengthParam = req.getParameter("length"); // screenSize
 		
 		PagingVO<ZipCodeVO> pagingVO = new PagingVO<>();
 		int currentPage = 1;
@@ -47,7 +47,7 @@ public class ZipTB_DTController extends HttpServlet{
 		// 검색 전 전체 레코드 수
 		int totalRecordNonSearch = dao.selectTotalCount(pagingVO);
 		// 검색 후 전체 레코드 수
-		pagingVO.setSearchWord(searchWord);
+		pagingVO.setSearchVO(new SearchVO(null, searchWord));
 		int totalRecord = dao.selectTotalCount(pagingVO);
 		pagingVO.setTotalRecord(totalRecord);
 		pagingVO.setCurrentPage(currentPage);

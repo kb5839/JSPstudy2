@@ -9,12 +9,12 @@ import java.io.Serializable;
 public class DataBasePropertyVO implements Serializable{
 	private String property_name;
 	private String property_value;
-	private String decription;
-	private DataBasePropertyVO(String property_name, String property_value, String decription) {
+	private String description;
+	private DataBasePropertyVO(String property_name, String property_value, String description) {
 		super();
 		this.property_name = property_name;
 		this.property_value = property_value;
-		this.decription = decription;
+		this.description = description;
 	}
 	
 	public void setProperty_name(String property_name) {
@@ -25,8 +25,8 @@ public class DataBasePropertyVO implements Serializable{
 		this.property_value = property_value;
 	}
 
-	public void setDecription(String decription) {
-		this.decription = decription;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getProperty_name() {
@@ -37,14 +37,14 @@ public class DataBasePropertyVO implements Serializable{
 		return property_value;
 	}
 
-	public String getDecription() {
-		return decription;
+	public String getDescription() {
+		return description;
 	}
 
 	@Override
 	public String toString() {
 		return "DataBasePropertyVO [property_name=" + property_name + ", property_value=" + property_value
-				+ ", decription=" + decription + "]";
+				+ ", description=" + description + "]";
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class DataBasePropertyVO implements Serializable{
 	public static class DataBasePropertyVOBuilder{
 		private String property_name;
 		private String property_value;
-		private String decription;
+		private String description;
 		
 		public DataBasePropertyVOBuilder property_name(String property_name){
 			this.property_name = property_name;
@@ -89,13 +89,13 @@ public class DataBasePropertyVO implements Serializable{
 			return this;
 		}
 		
-		public DataBasePropertyVOBuilder decription(String decription){
-			this.decription = decription;
+		public DataBasePropertyVOBuilder description(String description){
+			this.description = description;
 			return this;
 		}
 		
 		public DataBasePropertyVO build() {
-			return new DataBasePropertyVO(property_name, property_value, decription);
+			return new DataBasePropertyVO(property_name, property_value, description);
 		}
 	}
 	

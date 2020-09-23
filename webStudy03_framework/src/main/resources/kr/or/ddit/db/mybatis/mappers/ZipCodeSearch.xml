@@ -5,12 +5,12 @@
 <mapper namespace="kr.or.ddit.commons.dao.IZipCodeSearchDAO">
 	<sql id="searchFrag">
 		<where>                      
-			<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchWord)">
-				 SIDO LIKE '%'||#{searchWord}||'%'    
-				OR GUGUN LIKE '%'||#{searchWord}||'%'  
-				OR DONG LIKE '%'||#{searchWord}||'%'   
-				OR RI LIKE '%'||#{searchWord}||'%'     
-				OR BLDG LIKE '%'||#{searchWord}||'%'
+			<if test="searchVO != null and @org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.searchWord)">
+				 SIDO LIKE '%'||#{searchVO.searchWord}||'%'    
+				OR GUGUN LIKE '%'||#{searchVO.searchWord}||'%'  
+				OR DONG LIKE '%'||#{searchVO.searchWord}||'%'   
+				OR RI LIKE '%'||#{searchVO.searchWord}||'%'     
+				OR BLDG LIKE '%'||#{searchVO.searchWord}||'%'
 			</if>	
 		</where>
 	</sql>

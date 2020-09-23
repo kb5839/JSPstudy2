@@ -1,5 +1,6 @@
 package kr.or.ddit.prod.service;
 
+import kr.or.ddit.enumpkg.ServiceResult;
 import kr.or.ddit.vo.ProdVO;
 
 /**
@@ -7,6 +8,14 @@ import kr.or.ddit.vo.ProdVO;
  *
  */
 public interface IProdService {
+	
+	/**
+	 * 신규 상품 등록
+	 * @param prod
+	 * @return OK, FAILED
+	 */
+	public ServiceResult createProd(ProdVO prod);
+	
 	/**
 	 * 상품 상세 조회
 	 * @param prod_id

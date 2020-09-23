@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.ddit.commons.dao.IZipCodeSearchDAO;
 import kr.or.ddit.commons.dao.ZipCodeSearchDAOImpl;
 import kr.or.ddit.vo.PagingVO;
+import kr.or.ddit.vo.SearchVO;
 import kr.or.ddit.vo.ZipCodeVO;
 
 @WebServlet("/searchZip.do")
@@ -30,8 +31,9 @@ public class ZipTBController extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8");
 		String pageParam = req.getParameter("page");
+		String searchWord = req.getParameter("searchWord");
 		PagingVO<ZipCodeVO> pagingVO = new PagingVO<>();
-		pagingVO.setSearchWord(req.getParameter("searchWord"));
+		pagingVO.setSearchVO(new SearchVO(null, searchWord));
 		int totalRecord = dao.selectTotalCount(pagingVO);
 		pagingVO.setTotalRecord(totalRecord);
 		int currentPage = 1;

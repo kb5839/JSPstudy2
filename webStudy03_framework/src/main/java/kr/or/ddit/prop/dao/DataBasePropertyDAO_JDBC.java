@@ -51,11 +51,11 @@ public class DataBasePropertyDAO_JDBC implements IDataBasePropertyDAO{
 				}
 				where.append(String.format(ptrn, "PROPERTY_VALUE", param.getProperty_value()));
 			}
-			if(StringUtils.isNoneBlank(param.getDecription())) {
+			if(StringUtils.isNoneBlank(param.getDescription())) {
 				if(where.length()>0) {
 					where.append(" AND ");
 				}
-				where.append(String.format(ptrn, "DESCRIPTION", param.getDecription()));
+				where.append(String.format(ptrn, "DESCRIPTION", param.getDescription()));
 			}
 			if(where.length()>0) {
 				where.insert(0, " WHERE ");
@@ -77,7 +77,7 @@ public class DataBasePropertyDAO_JDBC implements IDataBasePropertyDAO{
 					DataBasePropertyVO.getBuilder()
 									.property_name(rs.getString("PROPERTY_NAME"))
 									.property_value(rs.getString("PROPERTY_VALUE"))
-									.decription(rs.getString("DESCRIPTION"))
+									.description(rs.getString("DESCRIPTION"))
 									.build());
 			}
 		}catch(SQLException e){

@@ -16,33 +16,44 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.HttpMethod;
+import kr.or.ddit.mvc.annotation.URIMapping;
+import kr.or.ddit.mvc.annotation.resolvers.RequestParameter;
 import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.PagingVO;
 import kr.or.ddit.vo.SearchVO;
 import kr.or.ddit.vo.ZipCodeVO;
 
-@WebServlet("/member/memberList.do")
-public class MemberListController extends HttpServlet {
+
+@CommandHandler
+public class MemberRetrieveController{
 	
 	IMemberService service = MemberServiceImpl.getInstance();
 	
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.setCharacterEncoding("UTF-8");
-		String pageParam = req.getParameter("page");
+	@URIMapping(value="/member/memberView.do", method=HttpMethod.GET)
+	public String doGet(@RequestParameter(name="who", defaultValue = "", required=true) String who, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		MemberVO member = service.retrieveMember(who);
+		req.setAttribute("member", member);
+		String goPage = "member/memberView";
+		return goPage;
+	}
+	
+	@URIMapping(value="/member/memberList.do", method=HttpMethod.GET)
+	public String sdfasd(@RequestParameter(name="page",required=false, defaultValue="1") int currentPage, 
+			@RequestParameter(name="searchType", required=false) String searchType,
+			@RequestParameter(name="searchWord", required=false) String searchWord,
+			HttpServletRequest req, HttpServletResponse resp) 
+			throws ServletException, IOException {
+		
 //		====검색
-		String searchType = req.getParameter("searchType");
-		String searchWord = req.getParameter("searchWord");
 		SearchVO searchVO = new SearchVO(searchType, searchWord);
 		PagingVO<MemberVO> pagingVO = new PagingVO<>(3, 2);
 		pagingVO.setSearchVO(searchVO);
 //		========
 		int totalRecord = service.retrieveMemberCount(pagingVO);
 		pagingVO.setTotalRecord(totalRecord); // totalPage
-		int currentPage = 1;
-		if(StringUtils.isNotBlank(pageParam) && StringUtils.isNumeric(pageParam)) {
-			currentPage = Integer.parseInt(pageParam);
-		}
+		
 		pagingVO.setCurrentPage(currentPage); // startRow, endRow, startPage, endPage
 		
 		List<MemberVO> memberList = service.retrieveMemberList(pagingVO);
@@ -57,10 +68,11 @@ public class MemberListController extends HttpServlet {
 					){
 				mapper.writeValue(out, pagingVO);
 			}
+			return null;
 		}else {
 			req.setAttribute("pagingVO", pagingVO);
-			String goPage = "/WEB-INF/views/member/memberList.jsp";
-			req.getRequestDispatcher(goPage).forward(req, resp);
+			String goPage = "member/memberList";
+			return goPage;
 		}
 	}
 }

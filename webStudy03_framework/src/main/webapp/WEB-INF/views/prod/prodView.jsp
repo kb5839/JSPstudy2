@@ -26,11 +26,28 @@
 		</tr>
 		<tr>
 			<th>상품분류</th>
-			<td><%=prod.getProd_lgu()%></td>
+			<td><%=prod.getLprod_nm()%></td>
 		</tr>
 		<tr>
-			<th>거래처코드</th>
-			<td><%=prod.getProd_buyer()%></td>
+			<th>거래처</th>
+			<td>
+				<table>
+					<thead>
+						<tr>
+							<th>거래처명</th>
+							<th>거래처소재지</th>
+							<th>거래처담당자명</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><a href="<%=request.getContextPath() %>/buyer/buyerView.do?what=${prod.buyer.buyer_id}">${prod.buyer.buyer_name }</a></td>
+							<td>${prod.buyer.buyer_add1 }</td>
+							<td>${prod.buyer.buyer_charger }</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
 		</tr>
 		<tr>
 			<th>구매가</th>
@@ -136,6 +153,9 @@
 					</tbody>
 				</table>
 			</td>
+		</tr>
+		<tr>
+		<input type="button" value="목록으로"/>
 		</tr>
 	</table>
 </body>
