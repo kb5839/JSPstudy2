@@ -54,6 +54,72 @@
 		    #{prod_qtysale,jdbcType=NUMERIC},  #{prod_mileage,jdbcType=NUMERIC}
 		)
 	</insert>
+	<sql id="searchFrag">
+		<trim prefix=" WHERE " prefixOverrides="AND">
+			<if test="searchDetail neq null">
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchDetail.prod_name)">
+				AND	PROD_NAME LIKE '%'||#{searchDetail.prod_name}||'%'
+				</if>
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchDetail.prod_lgu)">
+				AND	PROD_LGU =#{searchDetail.prod_lgu}
+				</if>
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchDetail.prod_buyer)">
+				AND	PROD_BUYER =#{searchDetail.prod_buyer}
+				</if>
+			</if>
+		</trim>	
+	</sql>
+	<select id="selectProdCount" parameterType="PagingVO" resultType="int">
+		SELECT COUNT(*)
+		FROM PROD INNER JOIN LPROD ON (PROD_LGU = LPROD_GU)
+						INNER JOIN BUYER ON (PROD_BUYER = BUYER_ID)
+		<include refid="searchFrag" />
+	</select>
+	<select id="selectProdList" parameterType="PagingVO" resultType="ProdVO">
+		WITH PRODROWID AS (
+			SELECT ROWID RD
+				, PROD_ID, PROD_NAME, PROD_LGU, PROD_BUYER
+				, PROD_COST, PROD_PRICE, PROD_SALE
+			FROM PROD		
+		)
+		SELECT B.*, BUYER_NAME "buyer.buyer_name"
+		FROM (
+			SELECT A.*, ROWNUM RNUM 
+			FROM (
+				SELECT PRODROWID.*					
+					, LPROD_NM
+					, BUYER_NAME 
+				FROM PRODROWID INNER JOIN LPROD ON (PROD_LGU = LPROD_GU)
+							INNER JOIN BUYER ON (PROD_BUYER = BUYER_ID)
+				<include refid="searchFrag" />
+				ORDER BY RD DESC
+			)	A		
+		) B
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}			
+	</select>
+	<update id="updateProd" parameterType="ProdVO">
+		UPDATE PROD
+		    SET
+		    PROD_NAME			=	#{prod_name,jdbcType=VARCHAR},
+		    PROD_COST			=	#{prod_cost,jdbcType=NUMERIC},
+		    PROD_PRICE			=	#{prod_price,jdbcType=NUMERIC},
+		    PROD_SALE			=	#{prod_sale,jdbcType=NUMERIC},
+		    PROD_OUTLINE		=	#{prod_outline,jdbcType=VARCHAR},
+		    PROD_DETAIL			=	#{prod_detail,jdbcType=CLOB},
+		    PROD_TOTALSTOCK		=	#{prod_totalstock,jdbcType=NUMERIC},
+		    PROD_PROPERSTOCK	=	#{prod_properstock,jdbcType=NUMERIC},
+		    PROD_SIZE			=	#{prod_size,jdbcType=VARCHAR},
+		    PROD_COLOR			=	#{prod_color,jdbcType=VARCHAR},
+		    PROD_DELIVERY		=	#{prod_delivery,jdbcType=VARCHAR},
+		    PROD_UNIT			=	#{prod_unit,jdbcType=VARCHAR},
+		    PROD_QTYIN			=	#{prod_qtyin,jdbcType=NUMERIC},
+		    PROD_QTYSALE		=	#{prod_qtysale,jdbcType=NUMERIC},
+		    PROD_MILEAGE		=	#{prod_mileage,jdbcType=NUMERIC}
+		    <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(prod_img)">
+		    	, PROD_IMG	=	#{prod_img,jdbcType=VARCHAR}
+		    </if>
+		WHERE    PROD_ID =		#{prod_id,jdbcType=VARCHAR}
+	</update>
 </mapper>
 
 

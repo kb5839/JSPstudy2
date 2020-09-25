@@ -85,7 +85,7 @@
 <jsp:useBean id="member" class="kr.or.ddit.vo.MemberVO" scope="request" />
 <jsp:useBean id="errors" class="java.util.LinkedHashMap" scope="request" />
 <body>
-	<form id="registForm" method="post" class="form-inline">
+	<form id="registForm" method="post" class="form-inline" enctype="multipart/form-data">
 		<table class="table table-bordered">
 			<tr>
 				<th>아이디</th>
@@ -115,6 +115,15 @@
 					<input type="text" required name="mem_name" value="${member.mem_name }" 
 							maxLength="20" data-msg="이름 필수"/>
 					<span class='error'><%=errors.get("mem_name") %></span>
+				</div>
+				</td>
+			</tr>
+			<tr>
+				<th>이미지</th>
+				<td>
+				<div class="form-group">
+					<input type="file" name="mem_image" />
+					<span class='error'><%=errors.get("mem_image") %></span>
 				</div>
 				</td>
 			</tr>

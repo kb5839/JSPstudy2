@@ -26,25 +26,33 @@ public class ProdDAOImpl implements IProdDAO {
 	}
 	
 	@Override
-	public int insertProd(ProdVO prod) {
-		try(
-			SqlSession session = sqlSessionFactory.openSession(true);
-		){		
-			IProdDAO mapper = session.getMapper(IProdDAO.class);
-			return mapper.insertProd(prod);
-		}
+	public int insertProd(ProdVO prod, SqlSession session) {
+		return session.insert("kr.or.ddit.prod.dao.IProdDAO.insertProd", prod);	
 	}
 
 	@Override
 	public int selectProdCount(PagingVO<ProdVO> pagingVO) {
-		// TODO Auto-generated method stub
-		return 0;
+		try(
+			SqlSession session = sqlSessionFactory.openSession();
+		){		
+			IProdDAO mapper = session.getMapper(IProdDAO.class);
+			return mapper.selectProdCount(pagingVO);
+		}
 	}
 
 	@Override
-	public List<ProdVO> selectProdList(PagingVO<ProdVO> paingVO) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ProdVO> selectProdList(PagingVO<ProdVO> pagingVO) {
+		try(
+			SqlSession session = sqlSessionFactory.openSession();
+		){		
+			IProdDAO mapper = session.getMapper(IProdDAO.class);
+			return mapper.selectProdList(pagingVO);
+		}
+	}
+
+	@Override
+	public int updateProd(ProdVO prod, SqlSession session) {
+		return session.insert("kr.or.ddit.prod.dao.IProdDAO.updateProd", prod);
 	}
 
 }

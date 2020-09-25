@@ -12,7 +12,7 @@ public class AuthenticateServiceImpl implements IAuthenticateService {
 	public Object authenticate(MemberVO member) {
 		MemberVO savedMember = dao.selectMember(member.getMem_id());
 		Object result = null;
-		if(savedMember==null) {
+		if(savedMember==null || "Y".equals(savedMember.getMem_delete())) {
 			result = ServiceResult.NOTEXIST;
 		}else {
 			String inputPass = member.getMem_pass();

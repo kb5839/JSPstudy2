@@ -21,6 +21,10 @@
 			<td><%=member.getMem_name()%></td>
 		</tr>
 		<tr>
+			<th>이미지</th>
+			<td><img src="data:image/*;base64,<%=member.getMem_imgBase64() %>" /></td>
+		</tr>
+		<tr>
 			<th>주민번호1</th>
 			<td><%=member.getMem_regno1()%></td>
 		</tr>

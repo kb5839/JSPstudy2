@@ -11,7 +11,7 @@
 	#top{
 		width: 100%;
 		height: 70px;
-		background-color: blue;
+		background-color: gray;
 	}
 	#top ul{
 		list-style: none;

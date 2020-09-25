@@ -1,3 +1,6 @@
+<%@page import="java.util.Map.Entry"%>
+<%@page import="kr.or.ddit.vo.MemberVO"%>
+<%@page import="java.util.Map"%>
 <%@page import="kr.or.ddit.vo.MenuVO"%>
 <%@page import="kr.or.ddit.servlet05.Model2PageModuleServlet.ServiceType"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -12,6 +15,14 @@
 			MenuVO menu = tmp.getMenuVO();
 			%>
 			<li><a href="#" class="menuA" data-action="<%=menu.getMenuURI() %>" data-service="<%=menu.getMenuId() %>"><%=menu.getMenuText() %></a></li>
+			<%
+		}
+		
+		Map<String,MemberVO> userList =(Map) application.getAttribute("userList");
+		for(Entry<String,MemberVO> entry:userList.entrySet()){
+			MemberVO user = entry.getValue();
+			%>
+			<li><%=user.getMem_name() %>
 			<%
 		}
 	%>

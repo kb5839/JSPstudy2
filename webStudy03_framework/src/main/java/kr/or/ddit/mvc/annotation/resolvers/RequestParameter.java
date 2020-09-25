@@ -6,8 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 핸들러 메소드 아규먼트 중에 기본형에 사용
- * 
+ * 핸들러 메소드 아규먼트 중 기본형에 사용.
  *
  */
 @Target(ElementType.PARAMETER)

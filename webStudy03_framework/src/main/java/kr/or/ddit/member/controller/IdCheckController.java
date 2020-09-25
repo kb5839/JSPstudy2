@@ -6,29 +6,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.or.ddit.exception.CustomException;
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.HttpMethod;
+import kr.or.ddit.mvc.annotation.URIMapping;
+import kr.or.ddit.mvc.annotation.resolvers.RequestParameter;
 
-@WebServlet("/idCheck.do")
-public class IdCheckController extends HttpServlet{
+
+@CommandHandler
+public class IdCheckController{
 	private IMemberService service = MemberServiceImpl.getInstance();
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String inputId = req.getParameter("inputId");
-		if(StringUtils.isBlank(inputId)) {
-			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "필수파라미터 누락");
-			return;
-		}
+	
+	@URIMapping(value="/idCheck.do", method=HttpMethod.POST)
+	public String doPost(@RequestParameter(name="inputId") String inputId, HttpServletResponse resp) throws ServletException, IOException {
 		boolean validId = false;
 		try {
 			service.retrieveMember(inputId);
@@ -44,6 +41,7 @@ public class IdCheckController extends HttpServlet{
 		){
 			mapper.writeValue(out, resultMap);
 		}
+		return null;
 	}
 }
 

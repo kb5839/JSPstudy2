@@ -5,8 +5,6 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,7 +21,6 @@ import kr.or.ddit.mvc.annotation.resolvers.RequestParameter;
 import kr.or.ddit.vo.MemberVO;
 import kr.or.ddit.vo.PagingVO;
 import kr.or.ddit.vo.SearchVO;
-import kr.or.ddit.vo.ZipCodeVO;
 
 
 @CommandHandler
@@ -32,7 +29,8 @@ public class MemberRetrieveController{
 	IMemberService service = MemberServiceImpl.getInstance();
 	
 	@URIMapping(value="/member/memberView.do", method=HttpMethod.GET)
-	public String doGet(@RequestParameter(name="who", defaultValue = "", required=true) String who, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public String doGet(@RequestParameter(name="who", required=true) String who, HttpServletRequest req) throws ServletException, IOException {
+		
 		MemberVO member = service.retrieveMember(who);
 		req.setAttribute("member", member);
 		String goPage = "member/memberView";
@@ -40,7 +38,8 @@ public class MemberRetrieveController{
 	}
 	
 	@URIMapping(value="/member/memberList.do", method=HttpMethod.GET)
-	public String sdfasd(@RequestParameter(name="page",required=false, defaultValue="1") int currentPage, 
+	public String sdfasd(
+			@RequestParameter(name="page", required=false, defaultValue="1") int currentPage,
 			@RequestParameter(name="searchType", required=false) String searchType,
 			@RequestParameter(name="searchWord", required=false) String searchWord,
 			HttpServletRequest req, HttpServletResponse resp) 
@@ -53,7 +52,6 @@ public class MemberRetrieveController{
 //		========
 		int totalRecord = service.retrieveMemberCount(pagingVO);
 		pagingVO.setTotalRecord(totalRecord); // totalPage
-		
 		pagingVO.setCurrentPage(currentPage); // startRow, endRow, startPage, endPage
 		
 		List<MemberVO> memberList = service.retrieveMemberList(pagingVO);

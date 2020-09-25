@@ -41,7 +41,7 @@ public class ProdDAOImplTest {
 
 	@Test
 	public void testInsertProd() {
-		int rowcnt = dao.insertProd(testProd);
+		int rowcnt = dao.insertProd(testProd, session);
 		assertEquals(1, rowcnt);
 	}
 

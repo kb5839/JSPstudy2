@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +37,7 @@ public class HandlerMapper implements IHandlerMapper {
 				continue;
 			}
 			Map<Method, Annotation> methods =
-					ReflectionUtils.getMethodsWithAnnotationAtClass(handlerType, 
-							URIMapping.class, String.class);
+					ReflectionUtils.getMethodsWithAnnotationAtClass(handlerType, URIMapping.class, String.class);
 			for(Entry<Method, Annotation> mtdEntry : methods.entrySet()) {
 				Method handlerMethod = mtdEntry.getKey();
 				URIMapping mapping = (URIMapping) mtdEntry.getValue();

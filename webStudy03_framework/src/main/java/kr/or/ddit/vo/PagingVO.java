@@ -27,7 +27,9 @@ public class PagingVO<T> implements Serializable{
 	private int startPage;
 	private int endPage;
 	
-	private SearchVO searchVO;
+	private SearchVO searchVO; // 일반 검색
+	
+	private T searchDetail; // 상세 검색용
 	
 	private List<T> data;
 	

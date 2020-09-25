@@ -2,10 +2,13 @@ package kr.or.ddit.vo;
 
 import java.io.Serializable;
 
+import lombok.NoArgsConstructor;
+
 /**
  * Domain Layer : model data, 정보의 속성과 의미 부여 및 영역 제한.
  *
  */
+@NoArgsConstructor
 public class DataBasePropertyVO implements Serializable{
 	private String property_name;
 	private String property_value;

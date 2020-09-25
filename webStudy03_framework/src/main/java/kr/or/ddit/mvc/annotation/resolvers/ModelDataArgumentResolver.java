@@ -16,23 +16,30 @@ public class ModelDataArgumentResolver implements IHandlerMethodArgumentResolver
 	public boolean isSupported(Parameter parameter) {
 		ModelData modelData = parameter.getAnnotation(ModelData.class);
 		Class<?> parameterType = parameter.getType();
-		return modelData!=null && !(ClassUtils.isPrimitiveOrWrapper(parameterType)||String.class.equals(parameterType));
+		return modelData!=null && !(ClassUtils.isPrimitiveOrWrapper(parameterType) || String.class.equals(parameterType));
 	}
 
 	@Override
-	public Object argumentResolve(Parameter parameter, HttpServletRequest req, HttpServletResponse resp) {
+	public Object argumentResolve(Parameter parameter, HttpServletRequest request, HttpServletResponse response) {
 		Class<?> parameterType = parameter.getType();
 		ModelData modelData = parameter.getAnnotation(ModelData.class);
 		try {
-			Object realParameter =  parameterType.newInstance();
-			req.setAttribute(modelData.name(), realParameter);
-			Map<String, String[]> parameterMap = req.getParameterMap();
+			Object realParameter = parameterType.newInstance();
+			request.setAttribute(modelData.name(), realParameter);
+			Map<String, String[]> parameterMap = request.getParameterMap();
 			BeanUtils.populate(realParameter, parameterMap);
 			return realParameter;
-			
 		} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 }
+
+
+
+
+
+
+
+

@@ -1,19 +1,20 @@
 package kr.or.ddit.prod.controller;
 
+import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.beanutils.BeanUtils;
 
 import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.filter.wrapper.FileUploadRequestWrapper;
+import kr.or.ddit.filter.wrapper.PartWrapper;
+import kr.or.ddit.mvc.annotation.CommandHandler;
+import kr.or.ddit.mvc.annotation.HttpMethod;
+import kr.or.ddit.mvc.annotation.URIMapping;
+import kr.or.ddit.mvc.annotation.resolvers.ModelData;
 import kr.or.ddit.prod.dao.IOthersDAO;
 import kr.or.ddit.prod.dao.OthersDAOImpl;
 import kr.or.ddit.prod.service.IProdService;
@@ -22,8 +23,8 @@ import kr.or.ddit.validate.CommonValidator;
 import kr.or.ddit.validate.InsertGroup;
 import kr.or.ddit.vo.ProdVO;
 
-@WebServlet("/prod/prodInsert.do")
-public class ProdInsertController extends HttpServlet{
+@CommandHandler
+public class ProdInsertController{
 	IProdService service = new ProdServiceImpl();
 	IOthersDAO othersDAO = new OthersDAOImpl();
 	
@@ -32,27 +33,23 @@ public class ProdInsertController extends HttpServlet{
 		req.setAttribute("buyerList", othersDAO.selectBuyerList());
 	}
 	
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	@URIMapping("/prod/prodInsert.do")
+	public String doGet(HttpServletRequest req) throws ServletException, IOException {
 		addAttribute(req);
-		req.getRequestDispatcher("/WEB-INF/views/prod/prodForm.jsp").forward(req, resp);
+		return "prod/prodForm";
 	}
 	
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//		1. 요청 파라미터 획득
-		req.setCharacterEncoding("UTF-8");
+	@URIMapping(value="/prod/prodInsert.do", method=HttpMethod.POST)
+	public String doPost(@ModelData(name="prod")ProdVO prod, HttpServletRequest req) throws ServletException, IOException {
 		addAttribute(req);
-		ProdVO prod = new ProdVO();
-		req.setAttribute("prod", prod);
-//		member.setMem_id(req.getParameter("mem_id"));
-		Map<String, String[]> parameterMap = req.getParameterMap();
-		try {
-			BeanUtils.populate(prod, parameterMap);
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		// 검증 전에 prod_img 결정
+		if(req instanceof FileUploadRequestWrapper) {
+			PartWrapper imageFile = ((FileUploadRequestWrapper) req).getPartWrapper("prod_image");
+			if(imageFile!=null) {
+				prod.setProd_image(imageFile);
+			}
 		}
+		
 //		2. 검증(DB 스키마 구조 참고)
 		Map<String, StringBuffer> errors = new LinkedHashMap<>();
 		req.setAttribute("errors", errors);
@@ -60,7 +57,6 @@ public class ProdInsertController extends HttpServlet{
 		boolean valid = validator.validate(prod, errors, InsertGroup.class);
 		
 		String goPage = null;
-		boolean redirect = false;
 		String message = null;
 		if(valid) {
 //		3. 통과
@@ -68,30 +64,24 @@ public class ProdInsertController extends HttpServlet{
 			ServiceResult result = service.createProd(prod);
 			switch (result) {
 			case FAILED:
-				goPage = "/WEB-INF/views/prod/prodForm.jsp";
+				goPage = "prod/prodForm";
 				message = "서버 문제로 등록이 완료되지 않았습니다 잠시 후 다시 시도해주세요.";
 				break;
 
 			default:
 //				PostRedirectGet pattern
-				goPage = "/prod/prodView.do?what="+prod.getProd_id();
-				redirect = true;
+				goPage = "redirect:/prod/prodView.do?what="+prod.getProd_id();
 				break;
 			}
 			
 		}else {
 //		   불통
-			goPage = "/WEB-INF/views/prod/prodForm.jsp";
+			goPage = "prod/prodForm";
 			
 		}
 //		  등록 이후의 경우의 수에 대한 처리
-		
 		req.setAttribute("message", message);
-		if(redirect) {
-			resp.sendRedirect(req.getContextPath() + goPage);
-		}else {
-			req.getRequestDispatcher(goPage).forward(req, resp);
-		}
+		return goPage;				
 	}
 }
 

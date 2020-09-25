@@ -1,25 +1,15 @@
 package kr.or.ddit.member.controller;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.fasterxml.jackson.databind.util.BeanUtil;
 
 import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.filter.wrapper.FileUploadRequestWrapper;
+import kr.or.ddit.filter.wrapper.PartWrapper;
 import kr.or.ddit.member.service.IMemberService;
 import kr.or.ddit.member.service.MemberServiceImpl;
 import kr.or.ddit.mvc.annotation.CommandHandler;
@@ -35,26 +25,17 @@ public class MemberRegistController {
 	private IMemberService service = MemberServiceImpl.getInstance();
 
 	@URIMapping("/registMember.do")
-	public String doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public String registForm() throws ServletException, IOException {
 		return "member/registForm";
 	}
 
 	@URIMapping(value="/registMember.do", method=HttpMethod.POST)
-	public String doPost(@ModelData(name="member") MemberVO member,HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-////		1. 요청 파라미터 획득
-//		MemberVO member = new MemberVO();
-//		req.setAttribute("member", member);
-////		member.setMem_id(req.getParameter("mem_id"));
-//		Map<String, String[]> parameterMap = req.getParameterMap();
-//		try {
-//			BeanUtils.populate(member, parameterMap);
-//		} catch (IllegalAccessException | InvocationTargetException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		System.out.println(member);
-//
-////		2. 검증(DB 스키마 구조 참고)
+	public String regist(@ModelData(name="member") MemberVO member, HttpServletRequest req) throws ServletException, IOException {
+		if(req instanceof FileUploadRequestWrapper) {
+			PartWrapper mem_image = ((FileUploadRequestWrapper) req).getPartWrapper("mem_image");
+			member.setMem_image(mem_image);
+		}
+//		2. 검증(DB 스키마 구조 참고)
 		Map<String, StringBuffer> errors = new LinkedHashMap<>();
 		req.setAttribute("errors", errors);
 		CommonValidator<MemberVO> validator = new CommonValidator<>();
