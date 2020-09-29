@@ -10,13 +10,9 @@
 </head>
 <body>
 	<!-- 한건의 상품과 해당 상품을 구매한 구매자 목록을 함께 UI 구성. -->
-	<%--
-		ProdVO prod = (ProdVO) request.getAttribute("prod");
-	--%>
 	<table class="table table-bordered">
 		<tr>
 			<td colspan="2">
-<!-- 			/prod/prodList.do 요청 발생 (동기 비동기 모두 처리)-->
 			<input type="button" value="목록으로" class="btn btn-primary"
 				onclick="location.href='${pageContext.request.contextPath }/prod/prodList.do';"
 			/>

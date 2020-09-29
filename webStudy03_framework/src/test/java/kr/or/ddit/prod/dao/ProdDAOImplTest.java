@@ -2,17 +2,22 @@ package kr.or.ddit.prod.dao;
 
 import static org.junit.Assert.*;
 
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import kr.or.ddit.db.CustomSqlSessionFactoryBuilder;
 import kr.or.ddit.vo.ProdVO;
 
 public class ProdDAOImplTest {
 	IProdDAO dao;
 	ProdVO testProd;
+	SqlSessionFactory sqlSessionFactory;
 
 	@Before
 	public void setUp() throws Exception {
+		sqlSessionFactory = CustomSqlSessionFactoryBuilder.getSqlSessionFactory();
 		dao = new ProdDAOImpl();
 		testProd = ProdVO.builder()
 					.prod_name("신규상품")
@@ -41,8 +46,10 @@ public class ProdDAOImplTest {
 
 	@Test
 	public void testInsertProd() {
+		SqlSession session = sqlSessionFactory.openSession();
 		int rowcnt = dao.insertProd(testProd, session);
 		assertEquals(1, rowcnt);
+		session.rollback();
 	}
 
 }

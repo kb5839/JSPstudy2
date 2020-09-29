@@ -1,8 +1,6 @@
-<%@page import="kr.or.ddit.vo.ProdVO"%>
-<%@page import="java.util.List"%>
-<%@page import="kr.or.ddit.vo.BuyerVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>	
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,6 +10,14 @@
 </head>
 <body>
 	<table class="table table-bordered">
+		<tr>
+			<td colspan="2">
+				<input type="button" value="목록으로" class="btn btn-primary"
+					onclick="location.href='${pageContext.request.contextPath}/buyer/buyerList.do';" />
+				<input type="button" value="수정하기" class="btn btn-info"
+					onclick="location.href='${pageContext.request.contextPath}/buyer/buyerUpdate.do?what=${buyer.buyer_id }';" />
+			</td>
+		</tr>
 		<tr>
 			<th>거래처코드</th>
 			<td>${buyer.buyer_id }</td>
@@ -83,30 +89,26 @@
 					</tr>
 				</thead>
 				<tbody>
-					<%
-						BuyerVO buyer = (BuyerVO)request.getAttribute("buyer");
-						List<ProdVO> prodList = buyer.getProdList();
-						if(prodList!=null && prodList.size()>0){
-							for(ProdVO prod:prodList){
-								%>
+					<c:set var="prodList" value="${buyer.prodList }"/>
+					<c:choose>
+						<c:when test="${not empty prodList }">
+							<c:forEach items="${prodList }" var="prod">
 								<tr>
-									<td><%=prod.getProd_name() %></td>
-									<td><%=prod.getProd_cost() %></td>
-									<td><%=prod.getProd_price() %></td>
-									<td><%=prod.getProd_sale() %></td>
-									<td><%=prod.getProd_outline() %></td>
-									<td><%=prod.getProd_mileage() %></td>
+									<td>${prod.prod_name }</td>
+									<td>${prod.prod_cost }</td>
+									<td>${prod.prod_price }</td>
+									<td>${prod.prod_sale }</td>
+									<td>${prod.prod_outline }</td>
+									<td>${prod.prod_mileage }</td>
 								</tr>
-								<%
-							}
-						}else{
-							%>
+							</c:forEach>
+						</c:when>
+						<c:otherwise>
 							<tr>
 								<td colspan="6">거래 물품이 없음.</td>
 							</tr>
-							<%
-						}
-					%>
+						</c:otherwise>
+					</c:choose>
 				</tbody>
 			</table>
 			</td>
@@ -114,3 +116,5 @@
 	</table>
 </body>
 </html>
+
+

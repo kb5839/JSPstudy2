@@ -74,23 +74,6 @@
 		</tfoot>
 	</table>
 
-<div class="modal fade" id="prodViewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"><span id="whatArea"></span>의 상세정보</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
 <script type="text/javascript">
 	let listTable = $("#prodTable");
 	let pagingArea = $("#pagingArea");
@@ -149,35 +132,16 @@
 		let name = this.name;
 		let lgu = $(this).val();
 		if(name=='prod_lgu'){
-			console.log(prod_buyerTag);
 			prod_buyerTag.find("option").hide();
 			prod_buyerTag.find("option:first").show();
-			prod_buyerTag.find("option."+lgu).show();
+			if(lgu){
+				prod_buyerTag.find("option."+lgu).show();
+			}else{
+				prod_buyerTag.find("option").show();
+			}
 		}
 		$(searchForm).submit();
 	});
-	
-<%--	$("#prodTable>tbody").on("click","a", function(){
-		let what = $(this).data("what"); 
- 		location.href="${pageContext.request.contextPath }/Prod/ProdView.do?what="+what;
-		$.ajax({
-			url : "${pageContext.request.contextPath }/prod/prodView.do",
-			method : "get",
-			data : {
-				what:what
-			},
-			dataType : "html",
-			success : function(resp) {
-				$("#prodViewModal").find("#whatArea").text(what);
-				$("#prodViewModal").find(".modal-body").html(resp);
-				$("#prodViewModal").modal("show");
-			},
-			error : function(errResp) {
-				console.log(errResp);
-			}
-		});
-		return false;
-	});--%>
 </script>	
 </body>
 </html>

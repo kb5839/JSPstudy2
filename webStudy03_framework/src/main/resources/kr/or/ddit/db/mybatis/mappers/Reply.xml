@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.board.dao.IReplyDAO">
+	<select id="selectReplyCount" parameterType="PagingVO" resultType="int">
+		SELECT COUNT(*)
+		FROM REPLYJSP
+		WHERE BO_NO = #{searchDetail.bo_no}
+	</select>
+	<select id="selectReplyList" parameterType="PagingVO" resultType="ReplyVO">
+		SELECT B.*
+		FROM (
+		    SELECT ROWNUM RNUM, A.*
+		    FROM (
+		        SELECT  REP_NO, BO_NO, REP_CONTENT, 
+		                REP_WRITER, TO_CHAR(REP_DATE, 'YYYY-MM-DD HH:MI') REP_DATE, 
+		                REP_IP, REP_PASS 
+		        FROM REPLYJSP
+		        WHERE BO_NO = #{searchDetail.bo_no}
+		        ORDER BY REP_NO DESC
+		    ) A
+		) B
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow} 
+	</select>
+	<insert id="insertReply">
+		<selectKey keyProperty="rep_no" resultType="int" order="BEFORE">
+			SELECT NVL(MAX(REP_NO), 0)+1
+			FROM REPLYJSP
+		</selectKey>
+		INSERT INTO REPLYJSP (
+		    REP_NO,    BO_NO,    REP_CONTENT,
+		    REP_WRITER,    REP_DATE,    REP_IP,
+		    REP_PASS
+		) VALUES (
+			#{rep_no },    #{bo_no},    #{rep_content },
+		    #{rep_writer },    SYSDATE,    #{rep_ip },
+		    #{rep_pass }
+		)
+	</insert>
+	<update id="updateReply" parameterType="ReplyVO">
+		UPDATE REPLYJSP
+		SET
+		REP_WRITER = #{rep_writer},
+		REP_CONTENT = #{rep_content}
+		WHERE REP_NO = #{rep_no} AND REP_PASS = #{rep_pass}
+		
+	</update>
+	<delete id="deleteReply" parameterType="ReplyVO">
+		DELETE 
+		FROM REPLYJSP
+		WHERE REP_NO = #{rep_no} AND REP_PASS = #{rep_pass}
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,7 +1,6 @@
-<%@page import="org.apache.commons.lang3.StringUtils"%>
-<%@page import="kr.or.ddit.vo.MenuVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +10,7 @@
 	#top{
 		width: 100%;
 		height: 70px;
-		background-color: gray;
+		background-color: gold;
 	}
 	#top ul{
 		list-style: none;
@@ -24,7 +23,7 @@
 	#left{
 		width: 20%;
 		height: 600px;
-		background-color: lime;
+		background-color: lightblue;
 		float: left;
 	}
 	#content{
@@ -50,17 +49,14 @@
 <jsp:include page="/includee/leftMenu.jsp" />
 </div>
 <div id="content">
-	<%
-		String includePage = (String)request.getAttribute("includePage");
-		if(StringUtils.isNotBlank(includePage)){
-// 			request.getRequestDispatcher(includePage).include(request, response);
-			pageContext.include(includePage);
-		}else{
-			%>
+	<c:choose>
+		<c:when test="${not empty includePage }">
+			<jsp:include page="${includePage }" />
+		</c:when>
+		<c:otherwise>
 			그냥 기본 페이지
-			<%	
-		}
-	%>
+		</c:otherwise>
+	</c:choose>
 </div>
 <div id="footer">
 <jsp:include page="/includee/footer.jsp" />

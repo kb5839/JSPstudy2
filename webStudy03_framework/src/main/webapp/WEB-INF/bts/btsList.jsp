@@ -1,23 +1,21 @@
-<%@page import="java.util.Iterator"%>
-<%@page import="java.util.Set"%>
-<%@page import="java.util.Map"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-3.5.1.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery-3.5.1.min.js"></script>
 <script type="text/javascript">
 	$(function(){
 		$("select:first").on("change", (event)=>{
 			let value = event.target.value;
 			let select = event.target;
 			console.log(value);
-<%-- 			location.href="<%=request.getContextPath() %>/bts/getMemberPage.do?member="+value; --%>
+<%-- 			location.href="${pageContext.request.contextPath }/bts/getMemberPage.do?member="+value; --%>
 			$.ajax({
-				url : "<%=request.getContextPath() %>/bts/getMemberPage.do",
+				url : "${pageContext.request.contextPath }/bts/getMemberPage.do",
 				data : {member:value},
 				method : "get",
 				dataType : "html",
@@ -33,18 +31,9 @@
 </head>
 <body>
 <select>
-	<% 
-		Map<String, String[]> btsMap = (Map)getServletContext().getAttribute("btsMap");
-		Set<String> keySet = btsMap.keySet();
-		Iterator<String> it = keySet.iterator();
-		String pattern = "<option  value='%s'>%s</option>";
-		while(it.hasNext()){
-			String mapKey = it.next();
-			String[] value = btsMap.get(mapKey);
-			out.println(String.format(pattern, mapKey, value[0]));
-		}
-	%>
-	
+	<c:forEach items="${btsMap }" var="entry">
+		<option value="${entry.key }">${entry.value[0] }</option>
+	</c:forEach>
 </select>
 <!-- 하나의 멤버를 선택하면, change 이벤트 핸들러내에서 -->
 <!-- "/bts/getMemberPage.do?member=B001" 요청 발생. -->

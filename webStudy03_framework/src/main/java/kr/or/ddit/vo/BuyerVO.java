@@ -14,6 +14,7 @@ import lombok.Data;
  */
 @Data
 public class BuyerVO implements Serializable{
+	private int rnum;
 	@NotBlank
 	@Size(max = 6)
 	private String buyer_id;

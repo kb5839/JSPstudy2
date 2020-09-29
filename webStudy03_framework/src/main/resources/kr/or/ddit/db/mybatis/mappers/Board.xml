@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.board.dao.IBoardDAO">
+	<sql id="searchFrag">
+		<where>
+			<if test="searchVO neq null and @org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.searchWord)">
+				<if test="'title' eq searchVO.searchType">
+					INSTR(BO_TITLE, #{searchVO.searchWord}) > 0
+				</if>
+				<if test="'writer' eq searchVO.searchType">
+					INSTR(BO_WRITER, #{searchVO.searchWord}) > 0
+				</if>
+				<if test="'content' eq searchVO.searchType">
+					INSTR(BO_CONTENT, #{searchVO.searchWord}) > 0
+				</if>
+				<if test="'all' eq searchVO.searchType">
+					INSTR(BO_TITLE, #{searchVO.searchWord}) > 0
+					OR
+					INSTR(BO_WRITER, #{searchVO.searchWord}) > 0
+					OR
+					INSTR(BO_CONTENT, #{searchVO.searchWord}) > 0
+				</if>
+			</if>
+		</where>
+	</sql>
+	<select id="selectBoardCount" parameterType="PagingVO" resultType="int">
+		SELECT COUNT(*)
+		FROM BOARD
+		<include refid="searchFrag" />
+	</select>
+	<select id="selectBoardList" parameterType="PagingVO" resultType="BoardVO">
+		SELECT B.*
+		FROM (
+		    SELECT ROWNUM RNUM, A.*
+		    FROM (
+		        SELECT BO_NO, BO_TITLE, BO_WRITER, 
+		                TO_CHAR(BO_DATE, 'YYYY-MM-DD HH:MI') BO_DATE, BO_HIT, BO_CONTENT
+		        FROM BOARD
+		        <include refid="searchFrag" />
+		        ORDER BY BO_NO DESC
+		    ) A
+		) B
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+	<resultMap type="BoardVO" id="boardMap" autoMapping="true">
+		<id property="bo_no" column="BONO"/>
+		<collection property="attatchList" ofType="AttatchVO" autoMapping="true"/>
+		<collection property="replyList" ofType="ReplyVO" autoMapping="true" />
+	</resultMap>
+	<select id="selectBoard" parameterType="int" resultMap="boardMap">
+		SELECT
+		    A.BO_NO BONO,    BO_TITLE,    BO_WRITER,    
+		    TO_CHAR(BO_DATE, 'YYYY-MM-DD HH:MI') BO_DATE,
+		    BO_CONTENT,    BO_PASS,    BO_IP,    BO_HIT,
+		    BO_PARENT
+		    ,  ATT_NO, ATT_FILENAME, ATT_SAVENAME, ATT_DOWNCOUNT
+		    ,  REP_NO,   	REP_CONTENT,
+			   REP_WRITER,    REP_DATE,    REP_IP,
+			   REP_PASS
+		FROM  BOARD A LEFT OUTER JOIN ATTATCH B ON (A.BO_NO = B.BO_NO)
+						LEFT OUTER JOIN REPLYJSP C ON (A.BO_NO = C.BO_NO)
+		WHERE A.BO_NO = #{bo_no}
+	</select>
+	<update id="incrementHit" parameterType="int">
+		UPDATE BOARD
+		SET
+		BO_HIT = BO_HIT + 1
+		WHERE BO_NO = #{bo_no}
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

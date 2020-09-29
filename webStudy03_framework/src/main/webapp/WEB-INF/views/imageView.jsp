@@ -1,6 +1,6 @@
-<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
 <%
 String jsonImageNames =(String) request.getAttribute("imageCookie");
 %>    
@@ -39,33 +39,21 @@ String jsonImageNames =(String) request.getAttribute("imageCookie");
 
 				
 			});
-			
-			<%
-				if(StringUtils.isNotBlank(jsonImageNames)){
-					%>
-					let json = '<%=jsonImageNames %>';
-					let objs = JSON.parse(json);
-					console.log(objs);
-					select.val(objs);
-					select.trigger("change");
-					<%
-				}
-			%>
+			<c:if test="${not empty imageCookie}">
+				let json = '${imageCookie}';
+				let objs = JSON.parse(json);
+				console.log(objs);
+				select.val(objs);
+				select.trigger("change");
+			</c:if>
 		}); 
 	</script>
 		<select multiple size="10">
-			<%
-				
-				String[] listFiles = (String[]) request.getAttribute("listFiles");
-				for(String file : listFiles){
-					String mime = application.getMimeType(file);
-					String clz = StringUtils.startsWith(mime, "image/")?"image":
-									StringUtils.startsWith(mime, "video/")?"video":"none";
-					%>
-					<option class="<%=clz %>"><%=file %></option>
-					<%
-				}
-			%>
+			<c:forEach items="${listFiles }" var="file">
+				<c:set var="mimeType" value="${pageContext.servletContext.getMimeType(file) }"/>
+				<c:set var="clz" value="${mimeType.startsWith('image/') ?'image': mimeType.startsWith('video/')?'video':'none'}"/>
+				<option class="${clz }">${file }</option>
+			</c:forEach>
 		</select>
 		<div id="resultArea">
 		

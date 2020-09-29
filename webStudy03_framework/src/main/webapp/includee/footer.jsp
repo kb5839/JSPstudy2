@@ -3,6 +3,3 @@
 <div>
 	FOOTER
 </div>
-<script>
-	$("div").test();
-</script>

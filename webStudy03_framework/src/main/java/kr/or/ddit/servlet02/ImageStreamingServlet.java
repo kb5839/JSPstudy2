@@ -43,6 +43,7 @@ public class ImageStreamingServlet extends HttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setCharacterEncoding("UTF-8");
 		String imageName = req.getParameter("image");
 		if(imageName==null || imageName.trim().length()==0) {
 			resp.sendError(400);
@@ -75,7 +76,6 @@ public class ImageStreamingServlet extends HttpServlet{
 			 cookieValue = new String[] {imageName};
 		}
 		String json = mapper.writeValueAsString(cookieValue);
-		json = URLEncoder.encode(json, "UTF-8");
 		
 		Cookie imageCookie = CookieUtils.createCookie("imageCookie", json, 
 							TextType.PATH, req.getContextPath(), 60*60*24*2);

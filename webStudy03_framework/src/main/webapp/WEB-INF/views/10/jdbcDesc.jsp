@@ -1,13 +1,6 @@
-<%@page import="java.util.ArrayList"%>
-<%@page import="kr.or.ddit.vo.DataBasePropertyVO"%>
-<%@page import="java.util.List"%>
-<%@page import="java.sql.SQLException"%>
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.Statement"%>
-<%@page import="java.sql.Connection"%>
-<%@page import="java.sql.DriverManager"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
 <!DOCTYPE html>
 <html>
 <head>
@@ -75,23 +68,14 @@
 		2) int executeUpdate(sql)
 	6. 결과 집합 핸들링
 	7. 자원을 release
-	<%
-		List<DataBasePropertyVO> list = (List) request.getAttribute("propList");
-		DataBasePropertyVO paramVO = (DataBasePropertyVO)request.getAttribute("param");
-		List<String> propNames = (List) request.getAttribute("propNames");
-	%>
 </pre>
 <form class="form-inline mb-3">
 	프로퍼티명:
 	<select name="property_name" class="form-control ml-2 mr-2" onchange="$('form:first').submit();">
 		<option value>프로퍼티명선택</option>
-		<%
-			for(String name : propNames){
-				%>
-				<option><%=name %></option>
-				<%
-			}
-		%>
+		<c:forEach items="${propNames }" var="name">
+			<option>${name }</option>
+		</c:forEach>
 	</select>
 	프로퍼티값:<input type="text" name="property_value" value="${param.property_value }" class="form-control ml-2"/>
 	<input type="submit" value="검색" class="btn btn-primary ml-2"/>
@@ -105,17 +89,13 @@
 		</tr>
 	</thead>
 	<tbody id="listArea">
-		<%
-			for(DataBasePropertyVO dbProp :list){
-				%>
-				<tr>
-					<td><%=dbProp.getProperty_name() %></td>
-					<td><%=dbProp.getProperty_value() %></td>
-					<td><%=dbProp.getDescription() %></td>
-				</tr>
-				<%
-			}
-		%>
+		<c:forEach items="${propList }" var="dbProp">
+			<tr>
+				<td>${dbProp.property_name }</td>
+				<td>${dbProp.property_value }</td>
+				<td>${dbProp.description }</td>
+			</tr>
+		</c:forEach>
 	</tbody>
 </table>
 </body>

@@ -5,6 +5,7 @@
 <%@page import="kr.or.ddit.servlet05.Model2PageModuleServlet.ServiceType"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
 <form id="menuForm" action="">
 	<input type="hidden" name="service" value=""/>
 </form>    
@@ -17,15 +18,12 @@
 			<li><a href="#" class="menuA" data-action="<%=menu.getMenuURI() %>" data-service="<%=menu.getMenuId() %>"><%=menu.getMenuText() %></a></li>
 			<%
 		}
-		
-		Map<String,MemberVO> userList =(Map) application.getAttribute("userList");
-		for(Entry<String,MemberVO> entry:userList.entrySet()){
-			MemberVO user = entry.getValue();
-			%>
-			<li><%=user.getMem_name() %>
-			<%
-		}
 	%>
+</ul>
+<ul>
+	<c:forEach items="${applicationScope.userList }" var="entry">
+		<li>${entry.value.mem_name }
+	</c:forEach>	
 </ul>
 <script type="text/javascript">
 	var menuForm = $("#menuForm");
